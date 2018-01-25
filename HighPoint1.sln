@@ -21,6 +21,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "HighPoint1", "HighPoint1\",
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "63349"
+		SlnRelativePath = "HighPoint1\"
 		DefaultWebSiteLanguage = "Visual C#"
 	EndProjectSection
 EndProject
