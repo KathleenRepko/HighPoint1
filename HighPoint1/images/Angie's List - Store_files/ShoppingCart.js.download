@@ -1,0 +1,72 @@
+'use strict';
+
+define(function (require) {
+  var AL = require('al');
+  var _ = require('underscore');
+  var CartItem = require('models/CartItem');
+  var ServiceProvider = require('models/ServiceProviders');
+  var Offer = require('models/Offer');
+  var $ = require('jquery');
+
+  /* eslint no-param-reassign:0 */
+  /* eslint new-cap:0 */
+  return {
+    Model: CartItem.Model,
+    Collection: AL.Collection.extend({
+      model: CartItem.Model,
+
+      url: function url() {
+        return AL.memApiPath + '/users/' + AL.user.get('userId') + '/shopping_cart_items';
+      },
+
+      fetchWithServiceProviders: function fetchWithServiceProviders() {
+        var self = this;
+        return this.fetch({ cache: false }).then(self.fetchServiceProviders.bind(self));
+      },
+
+      fetchServiceProviders: function fetchServiceProviders() {
+        var fetchPromises = this.map(function (item) {
+          var sp = new ServiceProvider.Model({ id: item.get('serviceProviderId') });
+          var offer = new Offer.Model({ offerId: item.get('skuId') });
+
+          return $.when(sp.fetch(), offer.fetch()).then(function () {
+            item.serviceProvider = sp;
+            item.offer = offer;
+          });
+        });
+
+        return $.when.apply($, fetchPromises);
+      },
+
+      getTotalPrice: function getTotalPrice() {
+        var prices = this.map(function (item) {
+          var amount = 0;
+          if (item.offer && item.offer.get('memberPrice').amount) {
+            amount = item.offer.get('memberPrice').amount * item.get('quantity');
+          }
+          return amount;
+        });
+
+        var total = prices.reduce(function (memo, num) {
+          return memo + num;
+        }, 0);
+        total = total % 1 === 0 ? total : total.toFixed(2);
+        return total;
+      },
+
+      addShoppingCartItem: function addShoppingCartItem(skuId, cb) {
+        var self = this;
+        var urlCopy = this.url;
+        this.url = this.url('url') + '/' + skuId;
+        this.create({ 'offerId': skuId }, { success: function success(data) {
+            self.add(new self.model(data.shoppingCartItem));
+            if (cb) {
+              return cb(data);
+            }
+            return undefined;
+          } });
+        this.url = urlCopy;
+      }
+    })
+  };
+});

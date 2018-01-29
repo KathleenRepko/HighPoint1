@@ -1,0 +1,115 @@
+define(function (require) {
+  var _ = require('underscore');
+  var module = require('module');
+  var ALModel = require('al/al_model');
+  var ALCollection = require('al/al_collection');
+  var ResponseModel = require('al/response_model');
+  var FeatureFlags = require('al/featureFlags');
+  var MessageLookup = require('al/messageLookup');
+  var UserModel = require('al/user');
+  var Router = require('al/router');
+  var alGlobals = require('al/globals');
+  var responsive = require('al/responsive');
+  var hashchange = require('al/hashchange');
+  var LibrariesConfig = require('common/librariesConfig');
+  var creditCardType = require('v2/utils/creditCardUtils');
+  var BOMUtils = require('al/bom_utils');
+
+  // Libraries that need to be loaded by AL, but not referenced in a var
+  // TODO: These may be able to be removed at some point
+  require('backbone');
+  require('al/al_validation');
+  require('al/al_sanitation');
+  require('reactBootstrap/constants');
+  require('components/trackerContext');
+
+  /* eslint no-var:0 */
+  /* eslint prefer-rest-params:0 */
+  /* eslint no-param-reassign:0 */
+  /* eslint no-unneeded-ternary:0 */
+
+  // Add Csrf-Token header to all ajax calls
+  $.ajaxPrefilter(function (options) {
+    if (!options.crossDomain && !options.beforeSend && !options.noCsrfToken) {
+      options.beforeSend = function (xhr) {
+        xhr.setRequestHeader('Csrf-Token', 'nocheck');
+      };
+    }
+  });
+
+
+  // The 'AL' object contains
+  // 1. Prototype objects for Models and Collections
+  // 2. Config data from _requireConfig.scala.html (via the 'module' object)
+  // 3. Globally accessible functions.
+  var config = module.config();
+  _.extend(config, BOMUtils, {
+
+    // Backbone Model and Collection classes.
+    Model: ALModel,
+    ResponseModel: ResponseModel,
+    Collection: ALCollection,
+    UserModel: UserModel,
+
+    // Utility to provide easy logging.  Especially used when defining default properties on components that expect
+    // a function passed from a parent to be executed on a particular event (onClick, onChange).
+    log: function (type, message) {
+      if (type === 'warn' && window.console.warn) {
+        window.console.warn(message);
+      } else if (type === 'error' && window.console.error) {
+        window.console.error(message);
+      }
+    },
+
+    // This is a utility to provide a standard handling of otherwise
+    // unrecoverable fetch errors.
+    // TODO(john): Per the discussion on TAMPABIZ-525 this should trigger a
+    // an exception to be caught by New Relic.
+    fetchFail: function () {
+      if (window.console && window.console.error) {
+        window.console.error('fetchFail:');
+        window.console.error(arguments);
+      }
+    },
+
+    getCookie: function (key) {
+      var allCookies = window.document.cookie;
+      var pairs = allCookies.split(';');
+      var value = _.find(pairs, function (pair) {
+        return (_.trim(pair.split('=')[0]) === key);
+      });
+      return (value ? value.split('=')[1] : '');
+    },
+
+    getLiveAgentChatConfigurationByName: function (chatConfigName) {
+      var chatConfig = (config.liveAgentChat ? config.liveAgentChat[chatConfigName] : undefined);
+      return (chatConfig ? chatConfig : { enabled: false, deploymentUrl: undefined, deploymentId: undefined, preferredAgentId: undefined, startChatButtonId: undefined});
+    },
+
+    globals: alGlobals,
+    user: new UserModel(config.user),
+    router: Router.init(config.pageName, (config.siteName === 'member')),
+    responsive: responsive,
+    hashchange: hashchange,
+    creditCardType: creditCardType,
+    featureFlags: new FeatureFlags(''),
+    messageLookup: new MessageLookup(),
+    isBusinessCenterSite: (config.siteName === 'businessCenter'),
+    isMemberSite: (config.siteName === 'member'),
+    isSnapFixSite: (config.siteName === 'snapfix'),
+    isLeadFeedSite: (config.siteName === 'leadfeed'),
+
+    // For tests and future use.
+    pageReady: function () {},
+
+    siteMod: {
+      businessCenter: 'bizcen',
+      member: 'member'
+    }[config.siteName]
+  });
+  window.config = config;
+
+  LibrariesConfig.run();
+
+  return config;
+});

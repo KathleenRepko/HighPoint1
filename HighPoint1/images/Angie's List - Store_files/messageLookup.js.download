@@ -1,0 +1,65 @@
+define(function (require) {
+  /* eslint no-var:0 */
+  /* eslint prefer-rest-params:0 */
+  var _ = require('underscore');
+
+  var unknownServerError = function () {
+    return 'Unknown server error' +
+      (this.code ? (' for code ' + this.code) : '') +
+      (this.context ? (' in context ' + this.context) : '');
+  };
+
+  var defaultServerMessageList = [
+    {code: null, context: null, result: unknownServerError},
+    {code: 400, context: null, result: 'Malformed data request{{info}}'},
+    {code: 401, context: null, result: 'Unauthenticated data request{{info}}'},
+    {code: 403, context: null, result: 'Unauthorized data request{{info}}'},
+    {code: 404, context: null, result: 'Data request not found{{info}}'},
+    {code: 500, context: null, result: 'Server failed to respond{{info}}'},
+    {code: 503, context: null, result: 'Server unavailable{{info}}'},
+    {code: 504, context: null, result: 'Server timeout{{info}}'}
+  ];
+
+  var MessageLookup = function (injectMessageList) {
+    var messageList = _(injectMessageList || defaultServerMessageList);
+    //
+    // MessageLookup.serverError(code, [context], [substitution object])
+    //     --> String
+    //
+    // This looks up a message from the from the given list using the first
+    // three parameters.  The optional parameter "context"
+    // allows for more specificity for the lookup. If the more specific match
+    // isn't found a less specific result is returned.
+    //
+    // If the result of the lookup is a function, it is evaluated with the
+    // "substitution object" as it's parameter.
+    //
+    // If the result has {{...}} patterns these are used as keys into the
+    // "substitution object" for replacement.
+    //
+    // See the corresponding messageLookup_test.js for detailed examples.
+    //
+    this.serverError = function () {
+      var args = Array.prototype.slice.call(arguments, 0);
+      var substitutions =
+        (args.length && _.isObject(args[args.length - 1])) ? args.pop() : {};
+      var findMe = {code: null, context: null};
+      findMe.code = Number(args.shift()) || null;
+      var resultByCode = (messageList.find(findMe) || {}).result;
+      findMe.context = args.shift() || null;
+      var resultByContext = (messageList.find(findMe) || {}).result;
+
+      var resultPattern = resultByContext || resultByCode || '';
+
+      var resultMessage = _.isFunction(resultPattern) ?
+        resultPattern.bind(findMe)(substitutions) :
+        resultPattern.replace(/\{\{[^\}]*\}\}/g, function (match) {
+          var replaceKey = match.slice(2, match.length - 2);
+          return substitutions[replaceKey] || '';
+        }
+      );
+      return resultMessage;
+    };
+  };
+  return MessageLookup;
+});

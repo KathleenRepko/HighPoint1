@@ -1,0 +1,66 @@
+'use strict';
+
+define(function (require) {
+  var _ = require('underscore');
+
+  /* eslint no-useless-escape:0 */
+  return {
+    getQueryParams: function getQueryParams() {
+      var queryString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : window.location.search;
+
+      return this.getQueryParameters(queryString);
+    },
+
+
+    getQueryParameters: function getQueryParameters() {
+      var queryString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : window.location.search;
+
+      var params = {};
+      queryString.slice(queryString.indexOf('?') + 1).split('&').map(function (substr) {
+        var arr = substr.split('=');
+        params[arr[0]] = arr[1];
+      });
+      params.url = queryString.slice(0, queryString.indexOf('?'));
+      return params;
+    },
+
+    getQueryParam: function getQueryParam(param, queryString) {
+      var str = queryString || location.search.substring(1);
+      return _.mapKeys(this.getQueryParameters(str), function (v, k) {
+        return k.toLowerCase();
+      })[param] || null;
+    },
+    getQueryValueByName: function getQueryValueByName(name) {
+      // TODO: Decouple cid, kwid from this implementation as it no longer works for camel case
+      var cleanName = name.toLowerCase().replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + cleanName + '=([^&#]*)');
+      var cleanLocation = location.search.replace(/([Cc][Ii][Dd]=)/, 'cid=').replace(/([Ss]_[Kk][Ww][Cc][Ii][Dd]=)/, 's_kwcid=');
+      var results = regex.exec(cleanLocation);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    },
+
+
+    getDeepRoute: function getDeepRoute() {
+      return window.location.pathname.split('/').pop();
+    },
+
+    removeParamFromQueryString: function removeParamFromQueryString(parameter) {
+      var queryString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : window.location.search;
+      return queryString.replace(new RegExp('^([^#]*\?)(([^#]*)&)?' + parameter + '(\=[^&#]*)?(&|#|$)'), '$1$3$5').replace(/^([^#]*)((\?)&|\?(#|$))/, '$1$3$4');
+    },
+
+    removeFromQueryString: function removeFromQueryString(params) {
+      var _this = this;
+
+      var queryString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : window.location.search;
+
+      if (_.isArray(params)) {
+        return params.reduce(function (prevQueryString, param) {
+          return _this.removeParamFromQueryString(param, prevQueryString);
+        }, queryString);
+      } else {
+        return this.removeParamFromQueryString(params, queryString);
+      }
+    }
+  };
+});

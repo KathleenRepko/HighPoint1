@@ -1,0 +1,48 @@
+define(function (require) {
+  /* eslint no-var:0 */
+  /* eslint prefer-rest-params:0 */
+  var ALModel = require('al/al_model');
+
+  /* This is a Model class for that can be used for endpoint communication.
+  *  (As opposed to Models that are contained in collections or other models.)
+  *  The main features are:
+  *  1. JSON parse and normalization of error response.
+  *  2. Attachment of response and responseError objects to model instance.
+  *     This makes them easily accessible in wherever the instance is defined.
+  *  3. "requesting" property.  This is set to "true" while the request is in
+  *     progress.  For example this could be used for maintaining the state of
+  *     spinners
+  */
+  return ALModel.extend({
+    response: null,
+    responseError: null,
+    requesting: false,
+    constructor: function () {
+      this.on('sync', function (model, resp) {
+        this.response = resp;
+        this.responseError = null;
+        this.requesting = false;
+      });
+
+      this.on('error', function (model, resp) {
+        this.response = null;
+        try {
+          this.responseError = JSON.parse(resp.responseText);
+        } catch (e) {
+          this.responseError = {
+            msg: resp.responseText
+          };
+        }
+        this.responseError.status = resp.status;
+        this.responseError.statusText = resp.statusText;
+        this.requesting = false;
+      });
+
+      this.on('request', function (model, resp, options) {
+        this.requesting = true;
+      });
+
+      ALModel.apply(this, arguments);
+    }
+  });
+});

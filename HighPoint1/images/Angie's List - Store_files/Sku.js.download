@@ -1,0 +1,11 @@
+'use strict';
+
+define(function (require) {
+  var AL = require('al');
+
+  var Model = AL.Model.extend();
+
+  return {
+    Model: Model
+  };
+});

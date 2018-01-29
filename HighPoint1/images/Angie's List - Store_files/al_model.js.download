@@ -1,0 +1,10 @@
+define(function (require) {
+  /* eslint no-var:0 */
+  var Backbone = require('backbone');
+
+  var model = Backbone.Model
+    .extend(require('al/al_sanitation'))
+    .extend(require('al/al_validation'));
+
+  return model;
+});

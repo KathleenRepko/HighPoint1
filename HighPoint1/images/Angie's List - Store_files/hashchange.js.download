@@ -1,0 +1,28 @@
+define(function (require) {
+  /* eslint no-var:0 */
+  var $ = require('jquery');
+  var _ = require('underscore');
+  var Backbone = require('backbone');
+
+  var hashChange = {
+    getHashValue: function () {
+      var hashValue;
+      if (window.location.hash) {
+        hashValue = window.location.hash.split('#')[1];
+      }
+      return hashValue;
+    },
+    setHashValue: function (newHashValue) {
+      window.location.hash = newHashValue;
+    }
+  };
+
+  _.extend(hashChange, Backbone.Events);
+
+  $(window).on('hashchange', function () {
+    var hashValue = hashChange.getHashValue();
+    hashChange.trigger('hashChange', hashValue);
+  });
+
+  return hashChange;
+});

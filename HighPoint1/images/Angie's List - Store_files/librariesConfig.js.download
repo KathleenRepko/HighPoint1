@@ -1,0 +1,42 @@
+'use strict';
+
+// This module is responsible for modifying the behavior of third party libraries.
+define(function (require) {
+  var $ = require('jquery');
+  var _ = require('underscore');
+  var UrlResources = require('urlResources');
+  var urlUtils = require('utils/urlUtils');
+
+  function _configureJquery() {
+    // When an XHR request returns with a status code of 401 and if the current page is not in the excluded list,
+    // redirect to the login page and set a cookie of 'r' (name for cookie from ControllerContextComponent.scala
+    // method "redirectToLogin").
+
+    // Must get AL via window.config due to circular dependency
+    var AL = window.config;
+    var urlRoot = UrlResources[AL.isMemberSite ? 'member' : 'businessCenter'];
+
+    var firstPathParam = _.first(window.location.pathname.split('/').reverse());
+
+    // Note: these strings must be pathname without query strings.  Either rewrite UrlResource to return pathnames
+    // or strip off query string after UrlResource function return.
+    var pageExcludeLocations = [urlRoot.login(), urlRoot.passwordReset(), urlRoot.notFound(), UrlResources.member.shopOffers(), UrlResources.search.offer({ id: firstPathParam }), UrlResources.member.passwordReset({ id: firstPathParam }), UrlResources.member.company(firstPathParam), UrlResources.member.product(firstPathParam), UrlResources.member.writeAReview({ useNewReviewFunnel: true })];
+    $(document).ajaxError(function (e, xhr) {
+      var onExcludePage = pageExcludeLocations.some(function (pathname) {
+        return pathname === window.location.pathname;
+      });
+      if (xhr.status === 401) {
+        if (!onExcludePage && !AL.isSnapFixSite && !AL.isLeadFeedSite) {
+          AL.setCookie('r', window.location.pathname);
+          AL.redirect(urlRoot.login());
+        }
+      }
+    });
+  }
+
+  return {
+    run: function run() {
+      _configureJquery();
+    }
+  };
+});

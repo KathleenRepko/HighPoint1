@@ -1,0 +1,48 @@
+'use strict';
+
+define(function (require) {
+  var AL = require('al');
+  var ServiceProviderCategoryStats = require('models/ServiceProviderCategoryStats');
+
+  var Model = AL.Model.extend({
+    url: function url() {
+      var spId = this.get('serviceProviderId');
+      var currentAddressId = AL.globals.attributes.currentAddress;
+      var path = AL.apiPath + '/service_providers/' + spId + '/metrics';
+      if (currentAddressId) {
+        path += '?addressId=' + currentAddressId.attributes.addressId;
+      }
+      return path;
+    },
+    defaults: {
+      numReviews: 0,
+      overallGpa: -1.0,
+      grade: 'NA',
+      numReviewsPerGrade: {
+        'A': 0,
+        'B': 0,
+        'C': 0,
+        'D': 0,
+        'F': 0
+      },
+      ratings: [],
+      categories: [],
+      reviewCounts: {
+        member: 0,
+        workCompleted: 0,
+        hasRetort: '0'
+      }
+    },
+    getCategoryStatsList: function getCategoryStatsList() {
+      return new ServiceProviderCategoryStats.Collection(this.get('categories') || [], {
+        comparator: function comparator(a, b) {
+          return b.get('numReviews') - a.get('numReviews') || (a.get('categoryName') > b.get('categoryName') ? 1 : -1);
+        }
+      });
+    }
+  });
+
+  return {
+    Model: Model
+  };
+});

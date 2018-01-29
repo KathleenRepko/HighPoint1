@@ -1,0 +1,34 @@
+define(function (require) {
+  /* eslint no-var:0 */
+  var _ = require('underscore');
+  var Backbone = require('backbone');
+  var sanitation = require('sanitation');
+
+  return {
+    sanitize: function (attrs, options) {
+      if (options && options.sanitize) {
+        sanitation.sanitize(attrs, this.sanitation, options);
+      }
+    },
+
+    save: function (key, value, options) {
+      var attrs;
+      var opts = options || {};
+
+      // This code is taken from backbone.js we need to get attrs object to sanitize it
+      if (key === null || typeof key === 'object') {
+        attrs = key;
+        opts = value || {};
+      } else {
+        (attrs = {})[key] = value;
+      }
+      opts = _.defaults(opts, {sanitize: true}); // if sanitize is not specify, default it here
+
+      // This will sanitize the data before validating and will update any data passed in (even if its bound to a form)
+      this.sanitize(attrs, opts);
+      opts.sanitize = false;
+
+      return Backbone.Model.prototype.save.call(this, attrs, opts);
+    }
+  };
+});

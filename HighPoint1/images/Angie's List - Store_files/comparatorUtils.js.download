@@ -1,0 +1,16 @@
+"use strict";
+
+define(function (require) {
+  return {
+    // sort comparator, with null/undefined/false things being sorted to the end of the list
+    compare: function compare(a, b) {
+      if (!a && b || a < b) {
+        return -1;
+      }
+      if (a && !b || a > b) {
+        return 1;
+      }
+      return 0;
+    }
+  };
+});

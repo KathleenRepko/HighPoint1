@@ -1,0 +1,29 @@
+define(function (require) {
+  /* eslint no-var:0 */
+  var _ = require('underscore');
+  var v = require('validation');
+
+  return {
+    validate: function (attrs, options) {
+      var result = v.validate(_.extend({}, this.attributes, attrs), this.validation, options);
+
+      // Backone expects 2 events to be fired for every validate call (doesnt matter if it validation passed or failed)
+      var self = this;
+      _.defer(function () {
+        self.trigger('validated', result.isValid, self, result.invalidAttrs);
+        self.trigger('validated:' + (result.isValid ? 'valid' : 'invalid'), self, result.invalidAttrs);
+      });
+
+      // Backbone expects <undefined> if this was successful, otherwise an associative array of invalid attributes
+      return result.isValid ? undefined : result.invalidAttrs;
+    },
+
+    isRequired: function (attrName) {
+      return v.isRequired(attrName, this.validation);
+    },
+
+    getMaxLength: function (attrName) {
+      return v.getMaxLength(attrName, this.validation);
+    }
+  };
+});

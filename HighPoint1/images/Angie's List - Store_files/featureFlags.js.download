@@ -1,0 +1,114 @@
+define(function (require) {
+  /* eslint no-var:0 */
+  /* eslint prefer-rest-params:0 */
+  /* eslint new-cap:0 */
+  var _ = require('underscore');
+  var $ = require('jquery');
+  var appDispatcher = require('appDispatcher');
+
+  var url;
+  var request;
+  var overrides = {};
+  var actualFlags = [];
+
+  var calculateActiveFlags = function () {
+    var toRemove = [];
+    var toAdd = [];
+    // For each property in the 'overrides' associative array, find values to add and remove
+    _.forOwn(overrides, function (value, key) {
+      if (value) {
+        toAdd.push(key);
+      } else {
+        toRemove.push(key);
+      }
+    });
+
+    // 'difference' out the flags to remove
+    // 'union' in the flags to add
+    return _.difference(_.union(actualFlags, toAdd), toRemove);
+  };
+
+  var dispatchUpdateEvent = function () {
+    appDispatcher.dispatch({actionType: 'featureFlags.updated'});
+  };
+
+  var library = {
+    activeFlags: [],
+    isLoading: false,
+
+    refresh: function () {
+      var self = this;
+      self.isLoading = true;
+
+      // Load the current feature flags, passing 'async' if defined
+      request = $.ajax({
+        url: url,
+        type: 'GET',
+        datatype: 'json',
+        cache: 'false'
+      });
+
+      request.done(function (data) {
+        actualFlags = data.featureFlags;
+        self.activeFlags = calculateActiveFlags();
+        dispatchUpdateEvent();
+      })
+      .fail(function (jqXHR, status, error) {
+        window.console.warn('Failed to load feature flags: ' + error);
+      })
+      .always(function () {
+        self.isLoading = false;
+      });
+    },
+
+    check: function (flag /* , ... multiple flags */) {
+      // Convert arguments to a flattened array
+      var flags = _.flattenDeep([].slice.call(arguments));
+
+      // We need to wrap the check in a deferred since the ajax call may not be done before 'check' is called
+      var deferred = $.Deferred();
+      var self = this;
+
+      $.when(request).always(function () {
+        // Check if all flags in the array are active
+        var active = flags.length > 0 &&
+          (_.intersection(flags, (self.activeFlags || [])).length === flags.length);
+        deferred.resolve(active);
+      });
+
+      return deferred.promise();
+    },
+
+    // Overrides feature flags based on an associative array of boolean values
+    // to apply to the flags
+    // ex:
+    // {
+    //    foo: true, // will always add the 'foo' flag even if server says its not avialable
+    //    bar: false // will always not have the 'bar' flag even if server says its available
+    // }
+    // If override is called multiple times, the overrides will merge,
+    // but the last override overwrites any previous override values
+    override: function (values) {
+      // Using 'defaults' with 'values' first so that we honor the most recent overrides first
+      overrides = _.defaults(values || {}, overrides);
+      this.activeFlags = calculateActiveFlags();
+      dispatchUpdateEvent();
+    },
+
+    // Clears any overrides that have been added
+    clearOverrides: function () {
+      overrides = {};
+      this.activeFlags = calculateActiveFlags();
+      dispatchUpdateEvent();
+    }
+  };
+
+  return function (apiPath) {
+    url = (apiPath || '') + '/feature_flags';
+
+    // Load initial flags
+    library.refresh();
+
+    return library;
+  };
+});

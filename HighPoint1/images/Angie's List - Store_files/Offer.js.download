@@ -1,0 +1,62 @@
+'use strict';
+
+define(function (require) {
+  var AL = require('al');
+  var Model = AL.Model.extend({
+    defaults: {
+      'postalCode': false
+    },
+
+    url: function url() {
+      var path = AL.apiPath + '/offers/' + this.get('offerId');
+      if (this.get('postalCode')) {
+        path += '?userPostalCode=' + this.get('postalCode');
+      }
+      return path;
+    },
+
+    percentageDiscount: function percentageDiscount() {
+      var original = parseInt(this.get('originalPrice').amount, 10);
+      var member = parseInt(this.get('memberPrice').amount, 10);
+      var percentage = (original - member) / original;
+      return Math.ceil(percentage * 100);
+    },
+
+    isExpired: function isExpired() {
+      var today = new Date();
+      var endDate = new Date(this.get('expiresAt'));
+      if (endDate < today) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    isYetToStart: function isYetToStart() {
+      var today = new Date();
+      var startDate = new Date(this.get('createdAt'));
+      if (startDate > today) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    isOutOfStock: function isOutOfStock() {
+      var unitsAvailable = this.get('unitsAvailable');
+      if (unitsAvailable === 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  });
+
+  return {
+    Model: Model,
+    Collection: AL.Collection.extend({
+      url: AL.apiPath + '/offers',
+      model: Model
+    })
+  };
+});
