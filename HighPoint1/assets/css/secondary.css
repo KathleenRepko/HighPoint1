@@ -9,3 +9,13 @@
 #iconUp {
     margin-top: -20px;
 }
+
+.faqQuestion {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.faqAnswer {
+    margin-left: 25px;
+    margin-bottom: 25px;
+}
