@@ -13,3 +13,11 @@
 .backgroundLight {
     background-color: #FFF5E6;
 }
+
+.backgroundMedium {
+    background-color: #ffebcc;
+}
+
+#noPad {
+    padding: 10px 0 0 0;
+}
