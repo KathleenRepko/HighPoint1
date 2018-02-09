@@ -1622,8 +1622,9 @@
 
 	}
 
+
 	body {
-		background: #ffffff;
+		background: #ffebcc;
 	}
 
 		body.is-loading *, body.is-loading *:before, body.is-loading *:after {
@@ -1676,7 +1677,7 @@
 		}
 
 	body {
-		background-color: #ffffff;
+		background-color: #ffebcc;
 		color: #000000;
 	}
 
@@ -2033,7 +2034,7 @@
 		.button.special {
 			background-color: #000000;
 			box-shadow: none;
-			color: #ffffff !important;
+			color: #ffebcc !important;
 		}
 
 			input[type="submit"].special:hover,
@@ -2356,7 +2357,7 @@
 	input[type="radio"]:checked + label:before {
 		background-color: #000000;
 		border-color: #000000;
-		color: #ffffff;
+		color: #ffebcc;
 	}
 
 	input[type="checkbox"]:focus + label:before,
@@ -6151,7 +6152,7 @@
 
 	.gallery.style1 {
 		background-color: #000000;
-		color: #ffffff;
+		color: #ffebcc;
 		-moz-align-items: center;
 		-webkit-align-items: center;
 		-ms-align-items: center;
@@ -6174,11 +6175,11 @@
 	}
 
 		.gallery.style1 input, .gallery.style1 select, .gallery.style1 textarea {
-			color: #ffffff;
+			color: #ffebcc;
 		}
 
 		.gallery.style1 a {
-			color: #ffffff;
+			color: #ffebcc;
 		}
 
 			.gallery.style1 a:hover {
@@ -6186,11 +6187,11 @@
 			}
 
 		.gallery.style1 strong, .gallery.style1 b {
-			color: #ffffff;
+			color: #ffebcc;
 		}
 
 		.gallery.style1 h1, .gallery.style1 h2, .gallery.style1 h3, .gallery.style1 h4, .gallery.style1 h5, .gallery.style1 h6 {
-			color: #ffffff;
+			color: #ffebcc;
 		}
 
 		.gallery.style1 blockquote {
@@ -6213,7 +6214,7 @@
 		.gallery.style1 .button {
 			background-color: transparent;
 			box-shadow: inset 0 0 0 1px white;
-			color: #ffffff !important;
+			color: #ffebcc !important;
 		}
 
 			.gallery.style1 input[type="submit"]:hover,
@@ -6241,7 +6242,7 @@
 			.gallery.style1 input[type="button"].special,
 			.gallery.style1 button.special,
 			.gallery.style1 .button.special {
-				background-color: #ffffff;
+				background-color: #ffebcc;
 				box-shadow: none;
 				color: #000000 !important;
 			}
@@ -6494,7 +6495,7 @@
 
 	.gallery.style2 {
 		background-color: #000000;
-		color: #ffffff;
+		color: #ffebcc;
 		display: -moz-flex;
 		display: -webkit-flex;
 		display: -ms-flex;
@@ -6505,11 +6506,11 @@
 	}
 
 		.gallery.style2 input, .gallery.style2 select, .gallery.style2 textarea {
-			color: #ffffff;
+			color: #ffebcc;
 		}
 
 		.gallery.style2 a {
-			color: #ffffff;
+			color: #ffebcc;
 		}
 
 			.gallery.style2 a:hover {
@@ -6517,11 +6518,11 @@
 			}
 
 		.gallery.style2 strong, .gallery.style2 b {
-			color: #ffffff;
+			color: #ffebcc;
 		}
 
 		.gallery.style2 h1, .gallery.style2 h2, .gallery.style2 h3, .gallery.style2 h4, .gallery.style2 h5, .gallery.style2 h6 {
-			color: #ffffff;
+			color: #ffebcc;
 		}
 
 		.gallery.style2 blockquote {
@@ -6544,7 +6545,7 @@
 		.gallery.style2 .button {
 			background-color: transparent;
 			box-shadow: inset 0 0 0 1px white;
-			color: #ffffff !important;
+			color: #ffebcc !important;
 		}
 
 			.gallery.style2 input[type="submit"]:hover,
@@ -6571,7 +6572,7 @@
 			.gallery.style2 input[type="button"].special,
 			.gallery.style2 button.special,
 			.gallery.style2 .button.special {
-				background-color: #ffffff;
+				background-color: #ffebcc;
 				box-shadow: none;
 				color: #000000 !important;
 			}
@@ -7083,7 +7084,7 @@
 
 		.wrapper.style2 > .inner {
 			padding: 5.25rem 3.5rem 3.25rem 3.5rem ;
-			background-color: #ffffff;
+			background-color: #ffebcc;
 			border-radius: 0.5rem;
 			margin: 0 auto;
 			max-width: 100%;
@@ -8072,15 +8073,15 @@
 
 		#wrapper > .invert {
 			background-color: #000000;
-			color: #ffffff;
+			color: #ffebcc;
 		}
 
 			#wrapper > .invert input, #wrapper > .invert select, #wrapper > .invert textarea {
-				color: #ffffff;
+				color: #ffebcc;
 			}
 
 			#wrapper > .invert a {
-				color: #ffffff;
+				color: #ffebcc;
 			}
 
 				#wrapper > .invert a:hover {
@@ -8088,11 +8089,11 @@
 				}
 
 			#wrapper > .invert strong, #wrapper > .invert b {
-				color: #ffffff;
+				color: #ffebcc;
 			}
 
 			#wrapper > .invert h1, #wrapper > .invert h2, #wrapper > .invert h3, #wrapper > .invert h4, #wrapper > .invert h5, #wrapper > .invert h6 {
-				color: #ffffff;
+				color: #ffebcc;
 			}
 
 			#wrapper > .invert blockquote {
@@ -8119,7 +8120,7 @@
 			#wrapper > .invert .button {
 				background-color: transparent;
 				box-shadow: inset 0 0 0 1px white;
-				color: #ffffff !important;
+				color: #ffebcc !important;
 			}
 
 				#wrapper > .invert input[type="submit"]:hover,
@@ -8146,7 +8147,7 @@
 				#wrapper > .invert input[type="button"].special,
 				#wrapper > .invert button.special,
 				#wrapper > .invert .button.special {
-					background-color: #ffffff;
+					background-color: #ffebcc;
 					box-shadow: none;
 					color: #000000 !important;
 				}
@@ -8168,7 +8169,7 @@
 					}
 
 			#wrapper > .invert label {
-				color: #ffffff;
+				color: #ffebcc;
 			}
 
 			#wrapper > .invert input[type="text"],
@@ -8200,7 +8201,7 @@
 
 			#wrapper > .invert input[type="checkbox"] + label,
 			#wrapper > .invert input[type="radio"] + label {
-				color: #ffffff;
+				color: #ffebcc;
 			}
 
 				#wrapper > .invert input[type="checkbox"] + label:before,
@@ -8210,8 +8211,8 @@
 
 			#wrapper > .invert input[type="checkbox"]:checked + label:before,
 			#wrapper > .invert input[type="radio"]:checked + label:before {
-				background-color: #ffffff;
-				border-color: #ffffff;
+				background-color: #ffebcc;
+				border-color: #ffebcc;
 				color: #000000;
 			}
 
@@ -8222,23 +8223,23 @@
 			}
 
 			#wrapper > .invert ::-webkit-input-placeholder {
-				color: #ffffff !important;
+				color: #ffebcc !important;
 			}
 
 			#wrapper > .invert :-moz-placeholder {
-				color: #ffffff !important;
+				color: #ffebcc !important;
 			}
 
 			#wrapper > .invert ::-moz-placeholder {
-				color: #ffffff !important;
+				color: #ffebcc !important;
 			}
 
 			#wrapper > .invert :-ms-input-placeholder {
-				color: #ffffff !important;
+				color: #ffebcc !important;
 			}
 
 			#wrapper > .invert .formerize-placeholder {
-				color: #ffffff !important;
+				color: #ffebcc !important;
 			}
 
 			#wrapper > .invert .icon.style2:before {
@@ -8261,7 +8262,7 @@
 			}
 
 			#wrapper > .invert header p {
-				color: #ffffff;
+				color: #ffebcc;
 			}
 
 			#wrapper > .invert table tbody tr {
@@ -8277,7 +8278,7 @@
 				}
 
 			#wrapper > .invert table th {
-				color: #ffffff;
+				color: #ffebcc;
 			}
 
 			#wrapper > .invert table thead {
